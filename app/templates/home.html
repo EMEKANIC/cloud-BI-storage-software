@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - CLOUD BI SYSTEM{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Cloud-based storage system for Business Intelligence</p>
+</div>
+
+<div class="pipeline">
+    <div class="pipeline-step active"><div class="node">1</div> Upload</div>
+    <div class="pipeline-line"></div>
+    <div class="pipeline-step"><div class="node">2</div> Process</div>
+    <div class="pipeline-line"></div>
+    <div class="pipeline-step"><div class="node">3</div> Visualize</div>
+</div>
+
+<div class="card">
+    <h3>Get started</h3>
+    <p style="color: var(--text-muted); margin-top: 8px; font-size: 14px;">
+        Upload a dataset to begin. Files are validated, cleaned, and stored ready for analysis.
+    </p>
+    <a href="/upload" class="btn btn-accent">Upload a dataset</a>
+</div>
+
+{% if datasets %}
+<div class="card" style="margin-top: 24px;">
+    <h3 style="margin-bottom: 16px;">Uploaded datasets</h3>
+    <table class="data-table" style="width: 100%;">
+        <thead>
+            <tr><th>Filename</th><th>Rows</th><th>Columns</th><th>Missing</th><th>Uploaded</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for d in datasets %}
+            <tr>
+                <td>{{ d.filename }}</td>
+                <td>{{ d.row_count }}</td>
+                <td>{{ d.column_count }}</td>
+                <td>{{ d.missing_values }}</td>
+                <td>{{ d.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="/dataset/{{ d.id }}" class="btn" style="margin-top: 0; padding: 6px 14px; font-size: 12px;">Visualize</a>
+                    {% if current_user.role == 'admin' %}
+                    <form method="POST" action="{{ url_for('delete_dataset', dataset_id=d.id) }}" style="display: inline;"
+                          onsubmit="return confirm('Delete {{ d.filename }}? This cannot be undone.');">
+                        <button type="submit" class="btn" style="margin-top: 0; padding: 6px 14px; font-size: 12px; background: #DC2626;">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

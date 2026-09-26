@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Upload - Nicholas BI System{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Upload Dataset</h1>
+    <p>Accepted formats: CSV, Word (.doc, .docx), PDF</p>
+</div>
+
+<div class="pipeline">
+    <div class="pipeline-step done"><div class="node">&#10003;</div> Upload</div>
+    <div class="pipeline-line flowing"></div>
+    <div class="pipeline-step active"><div class="node">2</div> Process</div>
+    <div class="pipeline-line"></div>
+    <div class="pipeline-step"><div class="node">3</div> Visualize</div>
+</div>
+
+<div class="card">
+    <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+        <label for="fileInput" class="dropzone" id="dropzone">
+            <div class="upload-icon">&#8593;</div>
+            <p>Drag a CSV, Word, or PDF file here, or click to browse</p>
+            <div class="filename" id="filename"></div>
+        </label>
+        <input type="file" name="file" id="fileInput" accept=".csv,.doc,.docx,.pdf" required>
+        <br>
+        <button type="submit" class="btn btn-accent" id="submitBtn" disabled>Upload file</button>
+    </form>
+
+    {% if message %}
+    <div class="status-banner {{ 'success' if success else 'error' }}">
+        {{ message }}
+    </div>
+    {% endif %}
+
+    {% if summary %}
+    <div class="summary-grid">
+        <div class="stat"><span class="stat-value mono">{{ summary.rows }}</span><span class="stat-label">Rows</span></div>
+        <div class="stat"><span class="stat-value mono">{{ summary.columns }}</span><span class="stat-label">Columns</span></div>
+        <div class="stat"><span class="stat-value mono">{{ summary.missing_values }}</span><span class="stat-label">Missing values</span></div>
+    </div>
+    {% endif %}
+</div>
+
+{% if table %}
+<div class="card" style="margin-top: 24px;">
+    <h3 style="margin-bottom: 16px;">Preview — first 10 rows</h3>
+    <div class="table-wrap">{{ table | safe }}</div>
+</div>
+{% endif %}
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const dropzone = document.getElementById('dropzone');
+    const filenameEl = document.getElementById('filename');
+    const submitBtn = document.getElementById('submitBtn');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+            filenameEl.textContent = fileInput.files[0].name;
+            submitBtn.disabled = false;
+        }
+    });
+
+    dropzone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', e => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+    });
+</script>
+
+{% endblock %}

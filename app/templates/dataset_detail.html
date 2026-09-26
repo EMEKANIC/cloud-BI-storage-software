@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ dataset.filename }} - Nicholas BI System{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>{{ dataset.filename }}</h1>
+    <p>{{ dataset.row_count }} rows &middot; {{ dataset.column_count }} columns &middot; uploaded {{ dataset.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+</div>
+<div style="margin-top: 16px;">
+        <a href="{{ url_for('view_file', dataset_id=dataset.id) }}" target="_blank" class="btn">View file</a>
+        <a href="{{ url_for('download_file', dataset_id=dataset.id) }}" class="btn btn-accent">Download</a>
+    </div>
+
+<div class="pipeline">
+    <div class="pipeline-step done"><div class="node">&#10003;</div> Upload</div>
+    <div class="pipeline-line"></div>
+    <div class="pipeline-step done"><div class="node">&#10003;</div> Process</div>
+    <div class="pipeline-line flowing"></div>
+    <div class="pipeline-step active"><div class="node">3</div> Visualize</div>
+</div>
+
+{% if charts %}
+<div class="chart-grid">
+    {% for chart in charts %}
+    <div class="card chart-card">
+        <h3>{{ chart.title }}</h3>
+        <canvas id="chart{{ loop.index }}"></canvas>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <p style="color: var(--text-muted);">Not enough categorical/numeric structure in this dataset to auto-generate charts.</p>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script type="application/json" id="charts-data">{{ charts | tojson | safe }}</script>
+<script>
+    const chartsData = JSON.parse(document.getElementById('charts-data').textContent);
+    const palette = ['#2DD4BF', '#0EA5A0', '#F59E0B', '#64748B', '#0B1120', '#94A3B8', '#38BDF8', '#A78BFA'];
+
+    chartsData.forEach((c, i) => {
+        const ctx = document.getElementById('chart' + (i + 1));
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: c.type,
+            data: {
+                labels: c.labels,
+                datasets: [{
+                    label: c.title,
+                    data: c.data,
+                    backgroundColor: c.type === 'pie' ? palette : palette[i % palette.length],
+                    borderRadius: c.type === 'bar' ? 6 : 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: c.type === 'pie' } }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

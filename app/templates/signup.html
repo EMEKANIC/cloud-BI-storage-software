@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - CLOUD BI SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; width: 100%;">
+    <div class="card" style="width: 360px;">
+        <div class="logo" style="color: var(--ink); margin-bottom: 4px;"><span class="dot"></span>CLOUD BI SYSTEM</div>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Create an account</p>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="status-banner error">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label style="font-size: 13px; color: var(--text-muted);">Username</label>
+            <input type="text" name="username" required
+                   style="width:100%; padding:10px; margin:6px 0 16px; border:1px solid var(--border); border-radius:8px;">
+
+            <label style="font-size: 13px; color: var(--text-muted);">Password</label>
+            <input type="password" name="password" required
+                   style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid var(--border); border-radius:8px;">
+
+            <button type="submit" class="btn btn-accent" style="width: 100%; justify-content: center;">Sign up</button>
+        </form>
+        <p style="text-align:center; font-size:13px; color:var(--text-muted); margin-top:16px;">
+            Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--accent-deep);">Log in</a>
+        </p>
+    </div>
+</body>
+</html>

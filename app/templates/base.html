@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CLOUD BI SYSTEM{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo"><span class="dot"></span>CLOUD BI SYSTEM</div>
+        <div class="subtitle">Cloud Storage &amp; Analytics</div>
+
+        <div class="nav-section-label">Workspace</div>
+        <a href="/" class="nav-link {% if active == 'home' %}active{% endif %}">
+            <span class="icon">&#9679;</span> Dashboard
+        </a>
+        <a href="/upload" class="nav-link {% if active == 'upload' %}active{% endif %}">
+            <span class="icon">&#8593;</span> Upload Data
+        </a>
+        <a href="#" class="nav-link">
+            <span class="icon">&#9633;</span> Reports
+        </a>
+
+        <div class="sidebar-footer">
+            {% if current_user.is_authenticated %}
+            Logged in as <strong>{{ current_user.username }}</strong> ({{ current_user.role }})<br>
+            <a href="{{ url_for('auth.logout') }}" style="color: var(--accent);">Log out</a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="status-banner error" style="margin-bottom: 24px;">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
