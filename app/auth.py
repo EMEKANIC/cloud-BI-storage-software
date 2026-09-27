@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app.models import db, User
 from app import bcrypt, oauth
+import traceback
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -80,32 +81,37 @@ def login_google():
 
 @auth_bp.route('/google/callback')
 def google_callback():
-    token = oauth.google.authorize_access_token()
-    user_info = token.get('userinfo') or oauth.google.userinfo()
-    email = user_info['email']
-    google_id = user_info['sub']
+    try:
+        token = oauth.google.authorize_access_token()
+        user_info = token.get('userinfo') or oauth.google.userinfo()
+        email = user_info['email']
+        google_id = user_info['sub']
 
-    user = User.query.filter_by(provider='google', provider_id=google_id).first()
+        user = User.query.filter_by(provider='google', provider_id=google_id).first()
 
-    if not user:
-        user = User.query.filter_by(email=email).first()
-        if user:
-            user.provider = 'google'
-            user.provider_id = google_id
-        else:
-            username = email.split('@')[0]
-            base_username = username
-            counter = 1
-            while User.query.filter_by(username=username).first():
-                username = f"{base_username}{counter}"
-                counter += 1
-            user = User(username=username, email=email, role='viewer',
-                        provider='google', provider_id=google_id)
-            db.session.add(user)
+        if not user:
+            user = User.query.filter_by(email=email).first()
+            if user:
+                user.provider = 'google'
+                user.provider_id = google_id
+            else:
+                username = email.split('@')[0]
+                base_username = username
+                counter = 1
+                while User.query.filter_by(username=username).first():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                user = User(username=username, email=email, role='viewer',
+                            provider='google', provider_id=google_id)
+                db.session.add(user)
 
-    db.session.commit()
-    login_user(user)
-    return redirect(url_for('home'))
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('home'))
+    except Exception as e:
+        print("=== GOOGLE CALLBACK ERROR ===")
+        traceback.print_exc()
+        return f"Google login failed: {e}", 500
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
