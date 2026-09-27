@@ -21,12 +21,20 @@
             <input type="text" name="username" required
                    style="width:100%; padding:10px; margin:6px 0 16px; border:1px solid var(--border); border-radius:8px;">
 
+            <label style="font-size: 13px; color: var(--text-muted);">Email</label>
+            <input type="email" name="email" required
+                   style="width:100%; padding:10px; margin:6px 0 16px; border:1px solid var(--border); border-radius:8px;">
+
             <label style="font-size: 13px; color: var(--text-muted);">Password</label>
             <input type="password" name="password" required
                    style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid var(--border); border-radius:8px;">
 
             <button type="submit" class="btn btn-accent" style="width: 100%; justify-content: center;">Sign up</button>
         </form>
+
+        <div style="margin: 18px 0; text-align: center; color: var(--text-muted); font-size: 12px;">or</div>
+        <a href="{{ url_for('auth.signup_google') }}" class="btn btn-secondary" style="width: 100%; justify-content: center; display: flex; text-decoration: none;">Sign up with Google</a>
+
         <p style="text-align:center; font-size:13px; color:var(--text-muted); margin-top:16px;">
             Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--accent-deep);">Log in</a>
         </p>

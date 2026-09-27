@@ -20,6 +20,11 @@
         <a href="#" class="nav-link">
             <span class="icon">&#9633;</span> Reports
         </a>
+        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <a href="{{ url_for('admin_users') }}" class="nav-link {% if active == 'admin' %}active{% endif %}">
+            <span class="icon">&#128100;</span> Manage Users
+        </a>
+        {% endif %}
 
         <div class="sidebar-footer">
             {% if current_user.is_authenticated %}

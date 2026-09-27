@@ -1,11 +1,14 @@
-﻿from flask import Flask, render_template, request, redirect, url_for, send_file
+﻿from flask import Flask, render_template, request, redirect, url_for, send_file, flash
+from urllib.parse import quote_plus
 from flask_login import LoginManager, login_required, current_user
 from flask_bcrypt import Bcrypt
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import pandas as pd
 import os
 import logging
 
+oauth = OAuth()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 
@@ -27,14 +30,14 @@ def create_app():
         filename=os.path.join(base_dir, 'app.log'),
         level=logging.WARNING,
         format='%(asctime)s %(levelname)s: %(message)s'
-    )
+    )  
 
     db_user = os.environ.get('DB_USER')
-    db_password = os.environ.get('DB_PASSWORD')
+    db_password = quote_plus(os.environ.get('DB_PASSWORD'))
     db_host = os.environ.get('DB_HOST')
     db_name = os.environ.get('DB_NAME')
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{db_user}:{db_password}@{db_host}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
@@ -44,8 +47,21 @@ def create_app():
 
     db.init_app(app)
     bcrypt.init_app(app)
+    oauth.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+
+    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+    if google_client_id and google_client_secret:
+        oauth.register(
+            name='google',
+            client_id=google_client_id,
+            client_secret=google_client_secret,
+            server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+            client_kwargs={'scope': 'openid email profile'}
+        )
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -200,5 +216,30 @@ def create_app():
         db.session.commit()
 
         return redirect(url_for('home'))
+
+    @app.route('/admin/users')
+    @role_required('admin')
+    def admin_users():
+        users = User.query.order_by(User.username).all()
+        return render_template('admin_users.html', active='admin', users=users)
+
+    @app.route('/admin/users/<int:user_id>/role', methods=['POST'])
+    @role_required('admin')
+    def update_user_role(user_id):
+        user = User.query.get_or_404(user_id)
+        new_role = request.form.get('role')
+
+        if new_role not in ('viewer', 'analyst', 'admin'):
+            flash('Invalid role selected.')
+            return redirect(url_for('admin_users'))
+
+        if user.id == current_user.id and new_role != 'admin':
+            flash('You cannot remove your own admin access.')
+            return redirect(url_for('admin_users'))
+
+        user.role = new_role
+        db.session.commit()
+        flash(f'Updated {user.username} to {new_role}.')
+        return redirect(url_for('admin_users'))
 
     return app

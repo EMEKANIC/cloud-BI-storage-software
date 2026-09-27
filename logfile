@@ -1,0 +1,25 @@
+2026-09-27 09:44:54.235 WAT [8580] LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+2026-09-27 09:44:54.241 WAT [8580] LOG:  listening on IPv6 address "::1", port 5432
+2026-09-27 09:44:54.241 WAT [8580] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-09-27 09:44:54.328 WAT [22024] LOG:  database system was interrupted; last known up at 2026-09-27 09:29:53 WAT
+2026-09-27 09:44:55.448 WAT [22024] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-09-27 09:44:55.456 WAT [22024] LOG:  redo starts at 0/1CE5710
+2026-09-27 09:44:55.457 WAT [22024] LOG:  invalid record length at 0/1CE5850: expected at least 24, got 0
+2026-09-27 09:44:55.457 WAT [22024] LOG:  redo done at 0/1CE5818 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-09-27 09:44:55.463 WAT [12400] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-09-27 09:44:55.479 WAT [12400] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.003 s, total=0.017 s; sync files=2, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=0 kB; lsn=0/1CE5850, redo lsn=0/1CE5850
+2026-09-27 09:44:55.496 WAT [8580] LOG:  database system is ready to accept connections
+2026-09-27 09:49:55.486 WAT [12400] LOG:  checkpoint starting: time
+2026-09-27 09:49:55.737 WAT [12400] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.226 s, sync=0.008 s, total=0.252 s; sync files=3, longest=0.005 s, average=0.003 s; distance=10 kB, estimate=10 kB; lsn=0/1CE83D0, redo lsn=0/1CE8378
+2026-09-27 08:55:56.278 GMT [11908] FATAL:  invalid value for parameter "timezone_abbreviations": "Default"
+2026-09-27 09:56:56.240 WAT [22448] WARNING:  autovacuum worker took too long to start; canceled
+2026-09-27 08:56:56.279 GMT [17800] FATAL:  invalid value for parameter "timezone_abbreviations": "Default"
+2026-09-27 09:57:56.241 WAT [22448] WARNING:  autovacuum worker took too long to start; canceled
+2026-09-27 08:57:56.278 GMT [15540] FATAL:  invalid value for parameter "timezone_abbreviations": "Default"
+2026-09-27 09:58:56.351 WAT [22448] WARNING:  autovacuum worker took too long to start; canceled
+2026-09-27 08:58:56.384 GMT [25440] FATAL:  invalid value for parameter "timezone_abbreviations": "Default"
+2026-09-27 09:59:56.366 WAT [22448] WARNING:  autovacuum worker took too long to start; canceled
+2026-09-27 08:59:56.402 GMT [24604] LOG:  could not open directory "C:/Program Files/PostgreSQL/18/share/timezone": No such file or directory
+2026-09-27 08:59:56.403 GMT [24604] LOG:  could not open directory "C:/Program Files/PostgreSQL/18/share/timezone": No such file or directory
+2026-09-27 08:59:56.409 GMT [24604] FATAL:  could not open directory "C:/Program Files/PostgreSQL/18/share/timezonesets": No such file or directory
+2026-09-27 08:59:56.409 GMT [24604] HINT:  This may indicate an incomplete PostgreSQL installation, or that the file "C:/Program Files/PostgreSQL/18/bin/postgres.exe" has been moved away from its proper location.
